@@ -1,4 +1,4 @@
-import React, { useState, useEffect }from "react";
+import React, { useState, useEffect } from "react";
 import {
   CheckCircle,
   Circle,
@@ -53,69 +53,51 @@ const REMINDERS_KEY = "habit-tracker-reminders";
 const HabitTaskTracker = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [habits, setHabits] = useState<Habit[]>(() => {
-  const stored = localStorage.getItem(HABITS_KEY);
-  return stored
-    ? JSON.parse(stored)
-    : [
+    const stored = localStorage.getItem(HABITS_KEY);
+    return stored
+      ? JSON.parse(stored)
+      : [
         { id: 1, name: "Morning Exercise", category: "Health", streak: 7, completedDates: {} },
         { id: 2, name: "Read 30 minutes", category: "Learning", streak: 5, completedDates: {} },
         { id: 3, name: "Meditate", category: "Wellness", streak: 3, completedDates: {} }
       ];
-});
+  });
 
 
-const [tasks, setTasks] = useState<Task[]>(() => {
-  const stored = localStorage.getItem(TASKS_KEY);
-  return stored
-    ? JSON.parse(stored)
-    : [
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const stored = localStorage.getItem(TASKS_KEY);
+    return stored
+      ? JSON.parse(stored)
+      : [
         { id: 1, name: "Complete project proposal", completed: false, priority: "high", dueDate: "2026-01-13" },
         { id: 2, name: "Call dentist", completed: false, priority: "medium", dueDate: "2026-01-12" }
       ];
-});
+  });
 
 
-const [reminders, setReminders] = useState<Reminder[]>(() => {
-  const stored = localStorage.getItem(REMINDERS_KEY);
-  return stored
-    ? JSON.parse(stored)
-    : [
+  const [reminders, setReminders] = useState<Reminder[]>(() => {
+    const stored = localStorage.getItem(REMINDERS_KEY);
+    return stored
+      ? JSON.parse(stored)
+      : [
         { id: 1, text: "Morning Exercise", time: "07:00", enabled: true },
         { id: 2, text: "Evening Reading", time: "20:00", enabled: true }
       ];
-});
-
-const requestNotificationPermission = async () => {
-  if (!("Notification" in window)) {
-    alert("This browser does not support notifications");
-    return;
-  }
-
-  if (Notification.permission === "granted") {
-    return;
-  }
-
-  if (Notification.permission !== "denied") {
-    await Notification.requestPermission();
-  }
-};
-
-useEffect(() => {
-  console.log("Service worker controller:", navigator.serviceWorker?.controller);
-}, []);
+  });
 
 
-useEffect(() => {
-  localStorage.setItem(HABITS_KEY, JSON.stringify(habits));
-}, [habits]);
 
-useEffect(() => {
-  localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
-}, [tasks]);
+  useEffect(() => {
+    localStorage.setItem(HABITS_KEY, JSON.stringify(habits));
+  }, [habits]);
 
-useEffect(() => {
-  localStorage.setItem(REMINDERS_KEY, JSON.stringify(reminders));
-}, [reminders]);
+  useEffect(() => {
+    localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
+    localStorage.setItem(REMINDERS_KEY, JSON.stringify(reminders));
+  }, [reminders]);
 
   const [showAddHabit, setShowAddHabit] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
@@ -131,7 +113,7 @@ useEffect(() => {
       if (habit.id === habitId) {
         const newCompletedDates = { ...habit.completedDates };
         const isCompleted = newCompletedDates[today];
-        
+
         if (isCompleted) {
           delete newCompletedDates[today];
           return { ...habit, completedDates: newCompletedDates, streak: Math.max(0, habit.streak - 1) };
@@ -146,19 +128,19 @@ useEffect(() => {
 
   const toggleTask = (taskId: number) => {
 
-    setTasks(tasks.map(task => 
+    setTasks(tasks.map(task =>
       task.id === taskId ? { ...task, completed: !task.completed } : task
     ));
   };
 
   const addHabit = () => {
     if (newHabit.name.trim()) {
-      setHabits([...habits, { 
-        id: Date.now(), 
-        name: newHabit.name, 
-        category: newHabit.category, 
-        streak: 0, 
-        completedDates: {} 
+      setHabits([...habits, {
+        id: Date.now(),
+        name: newHabit.name,
+        category: newHabit.category,
+        streak: 0,
+        completedDates: {}
       }]);
       setNewHabit({ name: '', category: 'Health' });
       setShowAddHabit(false);
@@ -167,12 +149,12 @@ useEffect(() => {
 
   const addTask = () => {
     if (newTask.name.trim()) {
-      setTasks([...tasks, { 
-        id: Date.now(), 
-        name: newTask.name, 
-        priority: newTask.priority, 
+      setTasks([...tasks, {
+        id: Date.now(),
+        name: newTask.name,
+        priority: newTask.priority,
         dueDate: newTask.dueDate,
-        completed: false 
+        completed: false
       }]);
       setNewTask({ name: '', priority: 'medium', dueDate: '' });
       setShowAddTask(false);
@@ -181,11 +163,11 @@ useEffect(() => {
 
   const addReminder = () => {
     if (newReminder.text.trim()) {
-      setReminders([...reminders, { 
-        id: Date.now(), 
-        text: newReminder.text, 
+      setReminders([...reminders, {
+        id: Date.now(),
+        text: newReminder.text,
         time: newReminder.time,
-        enabled: true 
+        enabled: true
       }]);
       setNewReminder({ text: '', time: '09:00' });
       setShowAddReminder(false);
@@ -205,7 +187,7 @@ useEffect(() => {
   };
 
   const toggleReminder = (id: number) => {
-    setReminders(reminders.map(r => 
+    setReminders(reminders.map(r =>
       r.id === id ? { ...r, enabled: !r.enabled } : r
     ));
   };
@@ -262,11 +244,10 @@ useEffect(() => {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`flex-1 min-w-[120px] py-3 px-4 rounded-md text-sm md:text-base
- font-medium transition-colors ${
-                activeTab === tab 
-                  ? 'bg-indigo-600 text-white' 
+ font-medium transition-colors ${activeTab === tab
+                  ? 'bg-indigo-600 text-white'
                   : 'text-gray-600 hover:bg-gray-100'
-              }`}
+                }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
@@ -276,29 +257,6 @@ useEffect(() => {
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
           <div className="space-y-6">
-
-<button
-  onClick={() => {
-    new Notification("Habit Tracker 🔔", {
-      body: "This is a test notification",
-    });
-  }}
-  className="bg-green-600 text-white px-4 py-2 rounded-lg"
->
-  Test Notification
-</button>
-
-
-
-<button
-  onClick={() => {
-    console.log("Notification permission:", Notification.permission);
-    requestNotificationPermission();
-  }}
-  className="bg-indigo-600 text-white px-4 py-2 rounded-lg"
->
-  Enable Notifications 🔔
-</button>
 
 
             {/* Stats Cards */}
@@ -314,7 +272,7 @@ useEffect(() => {
                   <Target className="text-indigo-600" size={40} />
                 </div>
               </div>
-              
+
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -349,15 +307,15 @@ useEffect(() => {
                   <div key={habit.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex items-center gap-3">
                       <button
-  onClick={() => toggleHabit(habit.id)}
-  className="p-2 active:scale-95"
->
-  {habit.completedDates[today] ? (
-    <CheckCircle className="text-green-600" size={28} />
-  ) : (
-    <Circle className="text-gray-400" size={28} />
-  )}
-</button>
+                        onClick={() => toggleHabit(habit.id)}
+                        className="p-2 active:scale-95"
+                      >
+                        {habit.completedDates[today] ? (
+                          <CheckCircle className="text-green-600" size={28} />
+                        ) : (
+                          <Circle className="text-gray-400" size={28} />
+                        )}
+                      </button>
 
 
                       <div>
@@ -382,22 +340,21 @@ useEffect(() => {
                   <div key={task.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-3">
                       <button
-  onClick={() => toggleTask(task.id)}
-  className="p-2 active:scale-95"
->
-  <Circle className="text-gray-400" size={28} />
-</button>
+                        onClick={() => toggleTask(task.id)}
+                        className="p-2 active:scale-95"
+                      >
+                        <Circle className="text-gray-400" size={28} />
+                      </button>
 
                       <div>
                         <p className="font-medium text-gray-800">{task.name}</p>
                         <p className="text-sm text-gray-500">Due: {task.dueDate || 'No date'}</p>
                       </div>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      task.priority === 'high' ? 'bg-red-100 text-red-700' :
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${task.priority === 'high' ? 'bg-red-100 text-red-700' :
                       task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-green-100 text-green-700'
-                    }`}>
+                        'bg-green-100 text-green-700'
+                      }`}>
                       {task.priority}
                     </span>
                   </div>
@@ -458,15 +415,15 @@ useEffect(() => {
                 <div key={habit.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <div className="flex items-center gap-3 flex-1">
                     <button
-  onClick={() => toggleHabit(habit.id)}
-  className="p-2 active:scale-95"
->
-  {habit.completedDates[today] ? (
-    <CheckCircle className="text-green-600" size={28} />
-  ) : (
-    <Circle className="text-gray-400" size={28} />
-  )}
-</button>
+                      onClick={() => toggleHabit(habit.id)}
+                      className="p-2 active:scale-95"
+                    >
+                      {habit.completedDates[today] ? (
+                        <CheckCircle className="text-green-600" size={28} />
+                      ) : (
+                        <Circle className="text-gray-400" size={28} />
+                      )}
+                    </button>
 
                     <div className="flex-1">
                       <p className="font-medium text-gray-800 text-lg">{habit.name}</p>
@@ -474,11 +431,11 @@ useEffect(() => {
                     </div>
                   </div>
                   <button
-  onClick={() => deleteHabit(habit.id)}
-  className="p-2 text-red-500 hover:text-red-700 active:scale-95"
->
-  <X size={20} />
-</button>
+                    onClick={() => deleteHabit(habit.id)}
+                    className="p-2 text-red-500 hover:text-red-700 active:scale-95"
+                  >
+                    <X size={20} />
+                  </button>
 
                 </div>
               ))}
@@ -544,11 +501,11 @@ useEffect(() => {
                     <div key={task.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-3 flex-1">
                         <button
-  onClick={() => toggleTask(task.id)}
-  className="p-2 active:scale-95"
->
-  <Circle className="text-gray-400" size={28} />
-</button>
+                          onClick={() => toggleTask(task.id)}
+                          className="p-2 active:scale-95"
+                        >
+                          <Circle className="text-gray-400" size={28} />
+                        </button>
 
                         <div className="flex-1">
                           <p className="font-medium text-gray-800">{task.name}</p>
@@ -556,19 +513,18 @@ useEffect(() => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          task.priority === 'high' ? 'bg-red-100 text-red-700' :
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${task.priority === 'high' ? 'bg-red-100 text-red-700' :
                           task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-green-100 text-green-700'
-                        }`}>
+                            'bg-green-100 text-green-700'
+                          }`}>
                           {task.priority}
                         </span>
                         <button
-  onClick={() => deleteTask(task.id)}
-  className="p-2 text-red-500 hover:text-red-700 active:scale-95"
->
-  <X size={20} />
-</button>
+                          onClick={() => deleteTask(task.id)}
+                          className="p-2 text-red-500 hover:text-red-700 active:scale-95"
+                        >
+                          <X size={20} />
+                        </button>
 
                       </div>
                     </div>
@@ -585,11 +541,11 @@ useEffect(() => {
                       <div key={task.id} className="flex items-center justify-between p-4 bg-green-50 rounded-lg opacity-75">
                         <div className="flex items-center gap-3 flex-1">
                           <button
-  onClick={() => toggleTask(task.id)}
-  className="p-2 active:scale-95"
->
-  <CheckCircle className="text-green-600" size={28} />
-</button>
+                            onClick={() => toggleTask(task.id)}
+                            className="p-2 active:scale-95"
+                          >
+                            <CheckCircle className="text-green-600" size={28} />
+                          </button>
 
                           <div className="flex-1">
                             <p className="font-medium text-gray-800 line-through">{task.name}</p>
@@ -597,11 +553,11 @@ useEffect(() => {
                           </div>
                         </div>
                         <button
-  onClick={() => deleteTask(task.id)}
-  className="p-2 text-red-500 hover:text-red-700 active:scale-95"
->
-  <X size={20} />
-</button>
+                          onClick={() => deleteTask(task.id)}
+                          className="p-2 text-red-500 hover:text-red-700 active:scale-95"
+                        >
+                          <X size={20} />
+                        </button>
 
                       </div>
                     ))}
@@ -666,18 +622,17 @@ useEffect(() => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggleReminder(reminder.id)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        reminder.enabled ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'
-                      }`}
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${reminder.enabled ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'
+                        }`}
                     >
                       {reminder.enabled ? 'ON' : 'OFF'}
                     </button>
                     <button
-  onClick={() => deleteReminder(reminder.id)}
-  className="p-2 text-red-500 hover:text-red-700 active:scale-95"
->
-  <X size={20} />
-</button>
+                      onClick={() => deleteReminder(reminder.id)}
+                      className="p-2 text-red-500 hover:text-red-700 active:scale-95"
+                    >
+                      <X size={20} />
+                    </button>
 
                   </div>
                 </div>
